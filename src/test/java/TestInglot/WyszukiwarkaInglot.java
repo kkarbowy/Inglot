@@ -10,9 +10,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +33,30 @@ public class WyszukiwarkaInglot {
    }
     @Test
     public void checkTheHighestPrice() {
+        //wyszukuję pędzle
+        findBrushesInSearchBarAndFilter();
+
+        //pobieram ceny do tablicy
+        ArrayList<Float> normalPrices = getPricesList(".price");
+        System.out.println("Ceny normalne " + normalPrices);
+
+        ArrayList<Float> discountPrices = getPricesList(".price.has-discount");
+        System.out.println("Ceny zniżkowe " + discountPrices);
+
+        //wykonanie asercji dla cen bez obniżki
+        float maxValue = normalPrices.get(0);
+        float expectedValue = 119.0f;
+
+        //wykonanie testu
+        assertAll("Porównanie cen",
+                () -> assertEquals(expectedValue, maxValue, 0.01f));
+
+        //wyświetlenie najwyższej wartości, gdy test przejdzie poprawnie
+        System.out.println("Najwyższa cena to " + maxValue + "zł");
+    }
+
+    //wyszukanie pędzli i posortowanie ich
+    private void findBrushesInSearchBarAndFilter() {
         driver.get("https://inglot.pl");
         //znalezienie wyszukiwarki
         WebElement searchInput = driver.findElement(By.id("topBarSearch"));
@@ -50,21 +75,16 @@ public class WyszukiwarkaInglot {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        ArrayList<Float> normalPrices = getPricesList(".price");
-        System.out.println("Ceny normalne " + normalPrices);
-
-        ArrayList<Float> discountPrices = getPricesList(".price.has-discount");
-        System.out.println("Ceny zniżkowe " + discountPrices);
     }
 
     //metoda pozwalająca pobrać listę cen za pomocą selektora css (po w nazwie klasy są spacje)
-    public ArrayList<Float> getPricesList(String nameOfCssSelector) {
+    private ArrayList<Float> getPricesList(String nameOfCssSelector) {
         ArrayList<Float> prices = new ArrayList<>();
         List<WebElement> pricesLocalisation = driver.findElements(By.cssSelector(nameOfCssSelector));
-        for (WebElement price : pricesLocalisation) {
-            String priceText = price.getText();
-            float priceValue = Float.parseFloat(priceText.replaceAll("[^0-9.,]", "").replace(",", "."));
-            prices.add(priceValue);
+        for (WebElement element : pricesLocalisation) {
+            String elementText = element.getText();
+            float elementValue = Float.parseFloat(elementText.replaceAll("[^0-9.,]", "").replace(",", "."));
+            prices.add(elementValue);
         }
         //Sortowanie listy malejąco
         Collections.sort(prices, Collections.reverseOrder());
