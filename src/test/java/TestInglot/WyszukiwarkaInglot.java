@@ -12,6 +12,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class WyszukiwarkaInglot {
@@ -63,8 +65,9 @@ public class WyszukiwarkaInglot {
             String priceText = price.getText();
             float priceValue = Float.parseFloat(priceText.replaceAll("[^0-9.,]", "").replace(",", "."));
             prices.add(priceValue);
-
         }
+        //Sortowanie listy malejąco
+        Collections.sort(prices, Collections.reverseOrder());
         return prices;
     }
 }
