@@ -11,6 +11,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WyszukiwarkaInglot {
 
    private WebDriver driver;
@@ -41,10 +44,28 @@ public class WyszukiwarkaInglot {
         //ustawienie selektora na "cena, malejąco"
         sortSelect.selectByVisibleText("Cena, malejąco");
         try {
-            Thread.sleep(5000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        ArrayList<Float> normalPrices = getPricesList(".price");
+        System.out.println("Ceny normalne " + normalPrices);
+
+        ArrayList<Float> discountPrices = getPricesList(".price.has-discount");
+        System.out.println("Ceny zniżkowe " + discountPrices);
+    }
+
+    //metoda pozwalająca pobrać listę cen za pomocą selektora css (po w nazwie klasy są spacje)
+    public ArrayList<Float> getPricesList(String nameOfCssSelector) {
+        ArrayList<Float> prices = new ArrayList<>();
+        List<WebElement> pricesLocalisation = driver.findElements(By.cssSelector(nameOfCssSelector));
+        for (WebElement price : pricesLocalisation) {
+            String priceText = price.getText();
+            float priceValue = Float.parseFloat(priceText.replaceAll("[^0-9.,]", "").replace(",", "."));
+            prices.add(priceValue);
+
+        }
+        return prices;
     }
 }
 //BUG - sortowanie na stronie inglot.pl nie działa poprawnie
