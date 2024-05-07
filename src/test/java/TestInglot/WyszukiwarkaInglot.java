@@ -37,10 +37,10 @@ public class WyszukiwarkaInglot {
         findBrushesInSearchBarAndFilter();
 
         //pobieram ceny do tablicy
-        ArrayList<Float> normalPrices = getPricesList(".price");
+        ArrayList<Float> normalPrices = getPricesList(PriceTypeSelector.PRICE.getNotation());
         System.out.println("Ceny normalne " + normalPrices);
 
-        ArrayList<Float> discountPrices = getPricesList(".price.has-discount");
+        ArrayList<Float> discountPrices = getPricesList(PriceTypeSelector.PRICE_HAS_DISCOUNT.getNotation());
         System.out.println("Ceny zniżkowe " + discountPrices);
 
         //wykonanie asercji dla cen bez obniżki
